@@ -32,15 +32,20 @@ sudo chmod +x /usr/bin/midi_over_usb
 
 echo "/usr/bin/midi_over_usb
 exit 0" > /etc/rc.local
-# add the new script to automatic loading
+# TODO ajouter script encodeur au démarrage automatique
 
 # choose channel
 digit_re='^[0-9]+$'
-while ! [[ $CHANNEL =~ $re ]]; do
-    echo Which channel do you want to use? Please be sure to enter an integer.
+while ! [[ $CHANNEL =~ $re ]] || [[ $CHANNEL -lt 15]] ; do
+    echo Which channel do you want to use? Please be sure to enter an integer between 0 and 15.
     read CHANNEL
 done
 echo $CHANNEL > channel
 echo You wan always change the channel by setting it in the channel file in your home.
+
+echo Downloading libraries...
+sudo apt-get update
+sudo apt-get install librtmidi
+sudo apt-get install wiringpi
 
 sudo 
