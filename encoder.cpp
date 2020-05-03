@@ -11,7 +11,7 @@ std::tuple<array12,array3> get_pins() {
     /* Get the pins and return arrays containing their numbers
      */
     //TODO check the validity of the pins
-#ifdef DEBUG
+#ifdef DEBUG && MOCK
     return {
         {8,9,7, 0,2,3, 12,13,14, 21,22,23 },
         {15,16,1}
@@ -36,7 +36,7 @@ std::tuple<array12,array3> get_pins() {
 uint_fast8_t get_channel() {
     /* Return the channel selected by user
      */
-#ifdef DEBUG
+#ifdef DEBUG && MOCK
     return 1;
 #endif
     std::ifstream channel_file("/home/pi/channel");

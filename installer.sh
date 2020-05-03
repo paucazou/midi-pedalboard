@@ -31,8 +31,8 @@ ls /sys/class/udc > UDC
 sudo chmod +x /usr/bin/midi_over_usb
 
 echo "/usr/bin/midi_over_usb
+/home/pi/entrypoint.sh
 exit 0" > /etc/rc.local
-# TODO ajouter script encodeur au démarrage automatique
 
 # choose channel
 digit_re='^[0-9]+$'
@@ -48,9 +48,15 @@ echo Setting pins. You can change pins default by editing pins file in your home
 echo "8 9 7 0 2 3 12 13 14 21 22 23
 15 16 1" > pins
 
+# download
 echo Downloading libraries...
 sudo apt-get update
 sudo apt-get install librtmidi
 sudo apt-get install wiringpi
 
-sudo 
+# compiling
+echo Compiling program...
+source build.sh
+build_release
+
+echo If no error occured, installation is finished.
