@@ -33,7 +33,7 @@ void check_duplicates (const T& arr) {
         for (size_t j=0; j<arr.size();++j) {
             if (j == i)
                 continue;
-            if (arr[j] == arr[j]){
+            if (arr[j] == arr[i]){
                 write_time();
                 error_file << "Please check the pins: " << static_cast<int>(arr[j]) << " is used more than one time.\n";
                 std::cerr << "Pins error\n";

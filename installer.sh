@@ -45,8 +45,8 @@ echo You wan always change the channel by setting it in the channel file in your
 
 # pins
 echo Setting pins. You can change pins default by editing pins file in your home. Pins number are the ones used by WiringPi library. More here: https://cdn.sparkfun.com/assets/learn_tutorials/6/7/6/PiZerov2.pdf
-echo "8 9 7 0 2 3 12 13 14 21 22 23
-15 16 1" > pins
+echo "7 0 2 3 21 22 23 24 25 1 4 5
+6 26 27" > pins
 
 # download
 echo Downloading libraries...

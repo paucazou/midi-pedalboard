@@ -20,7 +20,7 @@ void write_time() {
 void check_valid_pin(const uint_fast8_t pin) {
     /* Check that pin exists and can be used
      */
-    if (pin > 16 && pin < 21) {
+    if (pin > 7 && pin < 21 || pin > 28) {
         error_file << "Invalid pin: " << pin << "\n";
         std::cerr << "Invalid pin: " << pin << "\n";
         throw_and_flush();
@@ -41,8 +41,8 @@ std::tuple<array12,array3> get_pins() {
      */
 #if defined DEBUG && defined MOCK
     return {
-        {8,9,7, 0,2,3, 12,13,14, 21,22,23 },
-        {15,16,1}
+        {7,0,2, 3,21,22, 23,24,25, 1,4,5 },
+        {6, 26, 27}
     };
 #endif 
     std::ifstream pins_file ("/home/pi/pins");
@@ -117,6 +117,8 @@ uint_fast8_t get_channel() {
     channel_file >> channel;
     // no need to check if channel is under 15 since channel is unsigned
     if (channel_file.fail() || channel > 15) {
+        error_file << "Channel can not be set correctly from file. Please check that the 'channel' file contains an integer between 0 and 15.\nDefault channel will be used: 0.";
+        write_time();
         return 0;
     }
 #ifdef DEBUG
@@ -215,6 +217,7 @@ do {
             auto& key {key_array[idx]};
 #ifdef DEBUG
             std::cout << "Test key: " << key.key << " Status: " << std::boolalpha << key.status << "\n";
+            std::cout << "Current column: " << static_cast<int>(columns[j]) << " Current status: " << std::boolalpha << status << "\n";
 #endif
             if (status != key.status) {
                 key.status = ! key.status;
