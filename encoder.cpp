@@ -1,7 +1,6 @@
 #include "encoder.h"
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
 #include "RtMidi.h"
 #include "wiringPi.h"
 constexpr unsigned int base_key = 36; // C2
@@ -15,16 +14,25 @@ void write_time() {
      */
     std::time_t result = std::time(nullptr);
     error_file << std::asctime(std::localtime(&result));
+    error_file.flush();
 }
 
 void check_valid_pin(const uint_fast8_t pin) {
     /* Check that pin exists and can be used
      */
     if (pin > 16 && pin < 21) {
-        write_time();
         error_file << "Invalid pin: " << pin << "\n";
-        throw 1;
+        std::cerr << "Invalid pin: " << pin << "\n";
+        throw_and_flush();
     }
+}
+
+void throw_and_flush() {
+    /* flush the error file
+     */
+    write_time();
+    error_file.flush();
+    throw 1;
 }
 // setup
 
@@ -40,48 +48,60 @@ std::tuple<array12,array3> get_pins() {
     std::ifstream pins_file ("/home/pi/pins");
     // check file
     if (pins_file.fail()){
-        write_time();
         error_file << "Invalid file\n";
-        throw 1;
+        std::cerr << "Invalid file\n";
+        throw_and_flush();
     }
 
-    char pin_nb[2];
+    char pin_nb[3];
     array12 lines;
-    for (int i=0;i<=12;++i) {
-        pins_file.getline(pin_nb,2,' ');
+    for (int i=0;i<11;++i) {
+        pins_file.getline(pin_nb,3,' ');
         lines[i] = std::atoi(pin_nb);
+#ifdef DEBUG
+        std::cout << i << " " << pin_nb << "\n";
+#endif
     }
+    // we need to add the last line
+    pins_file.getline(pin_nb,3,'\n');
+    lines[11] = std::atoi(pin_nb);
 
     array3 columns;
-    for (int i=0;i<=3;++i) {
-        pins_file.getline(pin_nb,2,' ');
+    for (int i=0;i<3;++i) {
+        pins_file.getline(pin_nb,3,' ');
         columns[i] = std::atoi(pin_nb);
+#ifdef DEBUG
+        std::cout << i << " " << pin_nb << "\n";
+#endif
     }
+#ifdef DEBUG
+    std::cout << "Pins lines: " ;
+    for (const auto& elt : lines)
+        std::cout << static_cast<int>(elt) << " ";
+    std::cout << "\n";
+    std::cout << "Pins columns: ";
+    for (const auto& elt : columns)
+        std::cout << static_cast<int>(elt) << " ";
+    std::cout << "\n";
+#endif
     // check validity of pins
     for (const auto& elt : lines)
         check_valid_pin(elt);
     for (const auto& elt : columns)
         check_valid_pin(elt);
     // check no duplicate pins
-    for (const auto& lelt : lines)
-        for (const auto& celt : columns)
-            if {lelt == celt} {
-                write_time();
+    for (const auto& lelt : lines) {
+        for (const auto& celt : columns) {
+            if (lelt == celt) {
                 error_file << "Please check the pins: " << celt << " is used as line and column at the same time\n";
+                std::cerr << "Please check the pins: " << celt << " is used as line and column at the same time\n";
+            throw_and_flush();
             }
+        }
+    }
     check_duplicates(lines);
     check_duplicates(columns);
 
-#ifdef DEBUG
-    std::cout << "Pins lines: " ;
-    for (const auto& elt : lines)
-        std::cout << elt << " ";
-    std::cout << "\n";
-    std::cout << "Pins columns: ";
-    for (const auto& elt : columns)
-        std::cout << elt << " ";
-    std::cout << "\n";
-#endif
     return {lines, columns};
 }
 

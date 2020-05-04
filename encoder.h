@@ -4,8 +4,10 @@
 #include <array>
 #include <cstdint>
 #include <iostream>
+#include <fstream>
 #include <tuple>
 #include <vector>
+
 
 // types
 struct NoteStatus {
@@ -22,15 +24,20 @@ void write_time();
 
 void check_valid_pin(const uint_fast8_t pin);
 
+void throw_and_flush();
+
 template <typename T>
 void check_duplicates (const T& arr) {
+    std::ofstream error_file {"/home/pi/error_file",std::ofstream::app};
     for (size_t i=0;i<arr.size();++i) {
         for (size_t j=0; j<arr.size();++j) {
             if (j == i)
                 continue;
             if (arr[j] == arr[j]){
                 write_time();
-                error_file << "Please check the pins: " << arr[j] << " is used more than one time.\n"
+                error_file << "Please check the pins: " << static_cast<int>(arr[j]) << " is used more than one time.\n";
+                std::cerr << "Pins error\n";
+                error_file.flush();
                     throw 1;
             }
         }
