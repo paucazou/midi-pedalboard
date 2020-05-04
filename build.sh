@@ -1,4 +1,3 @@
-#g++ -pedantic -Wall -I /usr/include/rtmidi/ -lasound -lpthread -lrtmidi -D__LINUX_ALSA__ encoder.cpp -o encoder
 
 build_mock () {
     compiler=$1
@@ -13,7 +12,7 @@ build_debug () {
         -D DEBUG\
         -I /usr/include/rtmidi/ \
         -I /usr/include/\
-        -lasound -lpthread -lrtmidi -lwiringpi\
+        -lasound -lpthread -lrtmidi -lwiringPi\
         -D__LINUX_ALSA__\
         encoder.cpp main.cpp\
         -o encoder
@@ -24,8 +23,9 @@ build_release () {
     g++ -std=c++17\
         -I /usr/include/rtmidi/ \
         -I /usr/include/\
-        -lasound -lpthread -lrtmidi -lwiringpi\
+        -lasound -lpthread -lrtmidi -lwiringPi\
         -D__LINUX_ALSA__\
         encoder.cpp main.cpp\
-        -o encoder
+        -o encoder\
+        -O3
     }

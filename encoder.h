@@ -16,6 +16,28 @@ using status_array = std::vector<NoteStatus>;
 using array12 = std::array<uint_fast8_t,12>;
 using array3 = std::array<uint_fast8_t,3>;
 
+// security
+
+void write_time();
+
+void check_valid_pin(const uint_fast8_t pin);
+
+template <typename T>
+void check_duplicates (const T& arr) {
+    for (size_t i=0;i<arr.size();++i) {
+        for (size_t j=0; j<arr.size();++j) {
+            if (j == i)
+                continue;
+            if (arr[j] == arr[j]){
+                write_time();
+                error_file << "Please check the pins: " << arr[j] << " is used more than one time.\n"
+                    throw 1;
+            }
+        }
+    }
+
+}
+
 // setup
 
 std::tuple<array12,array3> get_pins();
