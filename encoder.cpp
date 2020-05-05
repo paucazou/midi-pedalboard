@@ -20,7 +20,7 @@ void write_time() {
 void check_valid_pin(const uint_fast8_t pin) {
     /* Check that pin exists and can be used
      */
-    if (pin > 7 && pin < 21 || pin > 28) {
+    if ((pin > 7 && pin < 21 )|| pin > 28) {
         error_file << "Invalid pin: " << pin << "\n";
         std::cerr << "Invalid pin: " << pin << "\n";
         throw_and_flush();
@@ -186,7 +186,8 @@ void send_message(uint_fast8_t value, uint_fast8_t key) {
 
         // checks
         if (midiout.getPortCount() == 0) {
-            // TODO logs raise error
+            error_file << "No port available.\n";
+            throw_and_flush();
         }
         midiout.openPort(1); // it seems that it's always the good one: port 0 is MIDI Trhough
         check_done = true;
@@ -216,13 +217,19 @@ do {
             const bool status = digitalRead(columns[j]);
             auto& key {key_array[idx]};
 #ifdef DEBUG
+#if 0
             std::cout << "Test key: " << key.key << " Status: " << std::boolalpha << key.status << "\n";
             std::cout << "Current column: " << static_cast<int>(columns[j]) << " Current status: " << std::boolalpha << status << "\n";
+#endif
 #endif
             if (status != key.status) {
                 key.status = ! key.status;
                 const auto signal = (status?NOTE_ON:NOTE_OFF);
                 send_message(signal,key.key);
+#ifdef DEBUG
+                std::cout << "Sent message: " << (signal==NOTE_ON?"Note_On":"Note_Off") << ":"<<key.key<<"\n";
+                std::cout << "Current column: " << static_cast<int>(columns[j]) << " Current line: " << static_cast<int>(lines[i]);
+#endif
             }
             current_key += lines.size();
         }
