@@ -3,6 +3,8 @@
 #include <ctime>
 #include "RtMidi.h"
 #include "wiringPi.h"
+// Deus in adjutorium meum intende
+// Soli Deo Gloria
 constexpr unsigned int base_key = 36; // C2
 constexpr unsigned int higher_key = 62; // D4
 std::ofstream error_file {"/home/pi/error_file",std::ofstream::app};
@@ -28,7 +30,9 @@ void check_valid_pin(const uint_fast8_t pin) {
 }
 
 void throw_and_flush() {
-    /* flush the error file
+    /* Write date and time,
+     * flush the error file
+     * throw
      */
     write_time();
     error_file.flush();
