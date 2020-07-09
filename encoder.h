@@ -50,6 +50,7 @@ void check_duplicates (const T& arr) {
 std::tuple<array12,array3> get_pins();
 uint_fast8_t get_channel();
 void set_output_pins(const array12&);
+void set_input_pins(const array3&);
 void light_on();
 status_array get_notes_status_array();
 

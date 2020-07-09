@@ -137,6 +137,19 @@ void set_output_pins(const array12& lines) {
         pinMode(line,OUTPUT);
 }
 
+void set_input_pins(const array3& columns) {
+    /* set lines as inputs
+     * (although this is the default value,
+     * we do that by security)
+     * and set the pull down resistor
+     * to avoid bizarre results
+     */
+    for (const auto& c : columns) {
+        pinMode(c,INPUT);
+        pullUpDnControl(c,PUD_DOWN);
+    }
+}
+
 void light_on () {
     /* light on the LED
      */
@@ -193,7 +206,7 @@ void send_message(uint_fast8_t value, uint_fast8_t key) {
             error_file << "No port available.\n";
             throw_and_flush();
         }
-        midiout.openPort(1); // it seems that it's always the good one: port 0 is MIDI Trhough
+        midiout.openPort(1); // it seems that it's always the good one: port 0 is MIDI Through
         check_done = true;
 
     }
@@ -221,7 +234,7 @@ do {
             const bool status = digitalRead(columns[j]);
             auto& key {key_array[idx]};
 #ifdef DEBUG
-#if 0
+#if 1
             std::cout << "Test key: " << key.key << " Status: " << std::boolalpha << key.status << "\n";
             std::cout << "Current column: " << static_cast<int>(columns[j]) << " Current status: " << std::boolalpha << status << "\n";
 #endif
@@ -239,9 +252,15 @@ do {
         }
         ++sub_base_key;
         digitalWrite(lines[i],LOW);
+#ifdef DEBUG
+        std::cout << "Line: " << static_cast<int>(lines[i]) << ": " << std::boolalpha << digitalRead(lines[i]) << std::endl;
+#endif
 
 
     }
+#ifdef DEBUG
+    std::cout << std::endl;
+#endif
 } while (LOOP_NB);
 #undef LOOP_NB
 }

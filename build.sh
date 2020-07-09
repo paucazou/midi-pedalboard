@@ -4,7 +4,7 @@ build_mock () {
     if [[ ! $compiler ]]; then
         compiler=g++
     fi
-    $compiler -pedantic -Wall -Wextra -std=c++17 -I ./mock encoder.cpp main.cpp ./mock/wiringPi.cpp ./mock/RtMidi.cpp -o encoder -D DEBUG -D LOOP_NB=false -D MOCK
+    $compiler -pedantic -Wall -Wextra -std=c++17 -I ./mock encoder.cpp main.cpp ./mock/wiringPi.cpp ./mock/RtMidi.cpp -o encoder -D DEBUG -D LOOP_NB=true -D MOCK $@
 }
 
 build_debug () {
