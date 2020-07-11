@@ -195,6 +195,7 @@ void send_message(uint_fast8_t value, uint_fast8_t key) {
      * value must be the note on or off followed by the channel
      */
     static RtMidiOut midiout;
+    constexpr int is_on = 0b0001'0000;
     // the message is required to be a vector of uchar. It is set to 3 elements with value zero
     static std::vector<unsigned char> message (3,0); 
     static bool check_done { false };
@@ -213,6 +214,7 @@ void send_message(uint_fast8_t value, uint_fast8_t key) {
 
     message[0] = value;
     message[1] = key;
+    message[2] = (value & is_on) ? 127 : 0;
     midiout.sendMessage(&message);
 }
 
@@ -252,9 +254,23 @@ do {
         }
         ++sub_base_key;
         digitalWrite(lines[i],LOW);
-#ifdef DEBUG
-        std::cout << "Line: " << static_cast<int>(lines[i]) << ": " << std::boolalpha << digitalRead(lines[i]) << std::endl;
-#endif
+        /* This delay is absolutely mandatory,
+         * even if I don't understand why that works.
+         * Without it, pressing a key of the first octave
+         * (and in some cases, in others too)
+         * results in the key and one of the following
+         * considered pressed by the program.
+         * For example, pressing the first C
+         * sends 36 to the decoder (that's expected)
+         * but also 37 (C#) and in some cases 38, 39, etc.
+         * Pressing B sends 47 (that's expected) but also...
+         * 36! It seems that the line is considered active
+         * by the program when it's too fast. Only 1 delay is sufficient
+         * and not noticeable by the user.
+         * I must add that pullUpDnControl seems to do nothing
+         */
+        delay(1);
+
 
 
     }

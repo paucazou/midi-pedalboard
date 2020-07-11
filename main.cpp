@@ -11,6 +11,7 @@ int main() {
         return 1;
     }
     set_output_pins(lines);
+    set_input_pins(columns);
     light_on();
     auto key_array { get_notes_status_array() };
 
